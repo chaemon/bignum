@@ -1,6 +1,6 @@
 [Package]
 name        = "bignum"
-version     = "1.0.0"
+version     = "1.0.1"
 author      = "Federico Omoto"
 description = "Wrapper around the GMP bindings for the Nim language."
 license     = "MIT"
