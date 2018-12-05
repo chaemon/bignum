@@ -1,5 +1,5 @@
 # Package
-version     = "1.0.1"
+version     = "1.0.2"
 author      = "Federico Omoto"
 description = "Wrapper around the GMP bindings for the Nim language."
 license     = "MIT"

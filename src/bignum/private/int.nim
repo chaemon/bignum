@@ -506,7 +506,9 @@ proc `not`*(z, x: Int): Int =
 
 proc `not`*(x: Int): Int =
   ## Returns the one's complement of `x`.
-  newInt() not x
+  let
+    zero = newInt()
+  mpz_com(zero[], x[])
 
 proc odd*(z: Int): bool =
   ## Returns whether `z` is odd.
