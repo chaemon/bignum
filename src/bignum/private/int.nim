@@ -1,5 +1,3 @@
-import unsigned
-
 type Int* = ref mpz_t
   ## An Int represents a signed multi-precision integer.
 
