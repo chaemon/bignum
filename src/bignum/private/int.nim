@@ -410,7 +410,7 @@ proc `*=`*(z: Int, x: int | culong | Int) =
 
 # TODO - countdown
 
-template countupImpl(incr: typed) {.immediate, dirty.} =
+template countupImpl(incr: untyped) {.dirty.} =
   when a is int or a is culong:
     var res = newInt(a)
   else:
