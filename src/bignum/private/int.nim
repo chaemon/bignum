@@ -24,18 +24,14 @@ proc validBase(base: cint) =
   if base < -36 or (base > -2 and base < 2) or base > 62:
     raise newException(ValueError, "Invalid base")
 
-proc finalizeInt(z: Int) =
-  # Finalizer - release the memory allocated to the mpz.
-  mpz_clear(z[])
-
 proc newInt*(x: culong): Int =
   ## Allocates and returns a new Int set to `x`.
-  new(result, finalizeInt)
+  new(result, finalizeMpz)
   mpz_init_set_ui(result[], x)
 
 proc newInt*(x: int = 0): Int =
   ## Allocates and returns a new Int set to `x`.
-  new(result, finalizeInt)
+  new(result, finalizeMpz)
   when isLLP64():
     if x.fitsLLP64Long:
       mpz_init_set_si(result[], x.clong)
@@ -54,7 +50,7 @@ proc newInt*(x: int = 0): Int =
 proc newInt*(s: string, base: cint = 10): Int =
   ## Allocates and returns a new Int set to `s`, interpreted in the given `base`.
   validBase(base)
-  new(result, finalizeInt)
+  new(result, finalizeMpz)
   if mpz_init_set_str(result[], s, base) == -1:
     raise newException(ValueError, "String not in correct base")
 
@@ -64,14 +60,14 @@ proc clear*(z: Int) =
   ## This normally happens on a finalizer call, but if you want immediate
   ## deallocation you can call it.
   GCunref(z)
-  finalizeInt(z)
+  finalizeMpz(z)
 
 proc clone*(z: Int): Int =
   ## Returns a clone of `z`.
-  new(result, finalizeInt)
+  new(result, finalizeMpz)
   mpz_init_set(result[], z[])
 
-proc digits*(z: Int, base: range[(2.cint) .. (62.cint)] = 10): csize =
+proc digits*(z: Int, base: range[(2.cint) .. (62.cint)] = 10): csize_t =
   ## Returns the size of `z` measured in number of digits in the given `base`.
   ## The sign of `z` is ignored, just the absolute value is used.
   mpz_sizeinbase(z[], base)
@@ -1028,7 +1024,7 @@ proc complementBit*(z: Int, i: culong): Int =
   result = z
   mpz_combit(z[], i)
 
-proc bitLen*(x: Int): csize =
+proc bitLen*(x: Int): csize_t =
   ## Returns the length of the absolute value of `x` in bits.
   digits(x, 2)
 

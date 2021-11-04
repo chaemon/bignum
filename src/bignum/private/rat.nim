@@ -3,10 +3,6 @@ import math
 type Rat* = ref mpq_t
   ## A Rat represents a quotient a/b of arbitrary precision.
 
-proc finalizeRat(z: Rat) =
-  # Finalizer - release the memory allocated to the mpq.
-  mpq_clear(z[])
-
 proc numRef(x: Rat): Int =
   # Returns the numerator of `x`. The result is a reference to `x`'s numerator.
   result = cast[ref mpz_t](x[].mpq_numref)
@@ -17,7 +13,7 @@ proc denomRef(x: Rat): Int =
 
 proc newRat*(): Rat =
   ## Creates a new Rat and set it to 0/1.
-  new(result, finalizeRat)
+  new(result, finalizeMpq)
   mpq_init(result[])
 
 proc newRat*(f: float): Rat =
@@ -25,7 +21,7 @@ proc newRat*(f: float): Rat =
   ## this conversion is exact.
   if classify(f) == fcNan or f == Inf or f == NegInf:
     raise newException(ValueError, "Rat does not support NaN, Inf and NegInf")
-  new(result, finalizeRat)
+  new(result, finalizeMpq)
   mpq_set_d(result[], f)
 
 proc newRat*(a, b: Int): Rat =
@@ -99,7 +95,7 @@ proc clear*(z: Rat) =
   ## This normally happens on a finalizer call, but if you want immediate
   ## deallocation you can call it.
   GCunref(z)
-  finalizeRat(z)
+  finalizeMpq(z)
 
 proc clone*(z: Rat): Rat =
   ## Returns a clone of `z`.
