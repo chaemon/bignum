@@ -54,13 +54,22 @@ proc newInt*(s: string, base: cint = 10): Int =
   if mpz_init_set_str(result[], s, base) == -1:
     raise newException(ValueError, "String not in correct base")
 
-proc clear*(z: Int) =
-  ## Clears the allocated space used by the number.
-  ##
-  ## This normally happens on a finalizer call, but if you want immediate
-  ## deallocation you can call it.
-  GCunref(z)
-  `=destroy`(z)
+when NimMajor >= 2:
+  proc clear*(z: Int) =
+    ## Clears the allocated space used by the number.
+    ##
+    ## This normally happens on a finalizer call, but if you want immediate
+    ## deallocation you can call it.
+    GCunref(z)
+    `=destroy`(z)
+else:
+  proc clear*(z: var Int) =
+    ## Clears the allocated space used by the number.
+    ##
+    ## This normally happens on a finalizer call, but if you want immediate
+    ## deallocation you can call it.
+    GCunref(z)
+    `=destroy`(z)
 
 proc clone*(z: Int): Int =
   ## Returns a clone of `z`.
