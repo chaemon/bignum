@@ -7,4 +7,4 @@ srcDir      = "src"
 
 # Deps
 requires "nim >= 1.6.14"
-requires "https://github.com/chaemon/nim-gmp >= 1.0.6"
+requires "https://github.com/chaemon/nim-gmp >= 0.2.7"
